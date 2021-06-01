@@ -1,0 +1,52 @@
+{
+  "name": "@nomspace/nomkit",
+  "version": "1.0.0",
+  "description": "A simple name resolution protocol",
+  "main": "./dist/src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./test.sh",
+    "build": "yarn compile:contracts && yarn compile:ts",
+    "clean": "rm -rf ./build ./dist ./types",
+    "deploy:alfajores": "yarn truffle migrate --network alfajores",
+    "compile:ts": "yarn tsc -b",
+    "compile:contracts": "yarn truffle compile && yarn typechain --target=truffle-v5 'build/contracts/*.json' && yarn ts-node ./src/codegen.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nomspace/nomspace.git"
+  },
+  "author": "Brian Li <brian@poof.cash>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nomspace/nomspace/issues"
+  },
+  "homepage": "https://github.com/nomspace/nomspace#readme",
+  "dependencies": {
+    "@celo/contractkit": "^1.2.0",
+    "@openzeppelin/contracts": "^4.1.0",
+    "@truffle/hdwallet-provider": "^1.4.0",
+    "dotenv": "^9.0.2",
+    "ts-node": "^9.1.1",
+    "web3-utils": "^1.3.5"
+  },
+  "devDependencies": {
+    "@celo/typechain-target-web3-v1-celo": "^0.2.0",
+    "@typechain/truffle-v5": "^5.0.0",
+    "@types/chai": "^4.2.18",
+    "@types/chai-as-promised": "^7.1.4",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^15.3.0",
+    "bn-chai": "^1.0.1",
+    "celo-devchain": "^3.1.1",
+    "chai-as-promised": "^7.1.1",
+    "prettier": "^2.3.0",
+    "prettier-plugin-solidity": "^1.0.0-beta.10",
+    "truffle": "^5.1.54",
+    "typechain": "^5.0.0",
+    "typescript": "^4.0.5"
+  },
+  "types": "./dist/src/index.d.ts"
+}
