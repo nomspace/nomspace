@@ -64,8 +64,4 @@ export class NomKit {
     const txo = this.contract.methods.setFeeModule(newFeeModule)
     return toTransactionObject(this.kit.connection, txo)
   }
-
-  public trial = (name: string)  => {
-    console.log(utils.formatBytes32String(name))
-  }
 }

@@ -1,8 +1,9 @@
 {
   "name": "@nomspace/nomkit",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A simple name resolution protocol",
   "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "directories": {
     "test": "test"
   },
@@ -11,8 +12,10 @@
     "build": "yarn compile:contracts && yarn compile:ts",
     "clean": "rm -rf ./build ./dist ./types",
     "deploy:alfajores": "yarn truffle migrate --network alfajores",
+    "console:alfajores": "yarn truffle console --network alfajores",
     "compile:ts": "yarn tsc -b",
-    "compile:contracts": "yarn truffle compile && yarn typechain --target=truffle-v5 'build/contracts/*.json' && yarn ts-node ./src/codegen.ts"
+    "compile:contracts": "yarn truffle compile && yarn typechain --target=truffle-v5 'build/contracts/*.json' && yarn ts-node ./src/codegen.ts",
+    "prepublishOnly": "yarn clean && yarn build"
   },
   "repository": {
     "type": "git",
@@ -30,7 +33,8 @@
     "@truffle/hdwallet-provider": "^1.4.0",
     "dotenv": "^9.0.2",
     "ts-node": "^9.1.1",
-    "web3-utils": "^1.3.5"
+    "web3-utils": "^1.3.5",
+    "yargs": "^17.0.1"
   },
   "devDependencies": {
     "@celo/typechain-target-web3-v1-celo": "^0.2.0",
@@ -47,6 +51,5 @@
     "truffle": "^5.1.54",
     "typechain": "^5.0.0",
     "typescript": "^4.0.5"
-  },
-  "types": "./dist/src/index.d.ts"
+  }
 }

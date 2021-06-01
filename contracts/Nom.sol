@@ -4,13 +4,14 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./interfaces/IFeeModule.sol";
+import "./interfaces/INom.sol";
 
 // NOTE: Name == Nom in the documentation and is used interchangeably
-contract Nom is Ownable {
+contract Nom is INom, Ownable {
 	using SafeMath for uint256;
 
   // @dev Each name's expiration timestamp
-  mapping (bytes32 => uint256) public expirations;
+  mapping (bytes32 => uint256) override public expirations;
   // @dev The upgradeable fee module for purchasing Noms
   IFeeModule feeModule;
   // @dev Each name's resolution
@@ -40,7 +41,7 @@ contract Nom is Ownable {
   // @dev Reserve a Nom for a duration of time
   // @param name The name to reserve
   // @param durationToReserve The length of time in seconds to reserve this name
-  function reserve(bytes32 name, uint256 durationToReserve) external {
+  function reserve(bytes32 name, uint256 durationToReserve) override external {
     require(isExpired(name), "Cannot reserve a name that has not expired");
     bool paid = feeModule.pay(durationToReserve);
     require(paid, "Failed to pay for the name");
@@ -55,7 +56,7 @@ contract Nom is Ownable {
   // @dev Extend a Nom reservation
   // @param name The name to extend the reservation of
   // @param durationToExtend The length of time in seconds to extend
-  function extend(bytes32 name, uint256 durationToExtend) external {
+  function extend(bytes32 name, uint256 durationToExtend) override external {
     require(!isExpired(name), "Cannot extend the reservation of a name that has expired");
     require(_msgSender() == owners[name], "Caller is not the owner of this name");
     bool paid = feeModule.pay(durationToExtend);
@@ -68,7 +69,7 @@ contract Nom is Ownable {
   // @dev Retrieve the address that a Nom points to
   // @param name The name to resolve
   // @returns resolution The address that the Nom points to
-  function resolve(bytes32 name) external view returns (address resolution) {
+  function resolve(bytes32 name) override external view returns (address resolution) {
     if (isExpired(name)) {
       return address(0);
     }
@@ -79,7 +80,7 @@ contract Nom is Ownable {
   // @dev Change the resolution of a Nom
   // @param name The name to change the resolution of
   // @param newResolution The new address that should be pointed to
-  function changeResolution(bytes32 name, address newResolution) external {
+  function changeResolution(bytes32 name, address newResolution) override external {
     require(!isExpired(name), "Cannot change resolution of an expired name");
     require(_msgSender() == owners[name], "Caller is not the owner of this name");
 
@@ -91,7 +92,7 @@ contract Nom is Ownable {
   // @dev Retrieve the owner of a Nom
   // @param name The name to find the owner of
   // @returns owner The address that owns the Nom
-  function nameOwner(bytes32 name) external view returns (address owner) {
+  function nameOwner(bytes32 name) override external view returns (address owner) {
     if (isExpired(name)) {
       return address(0);
     }
@@ -102,7 +103,7 @@ contract Nom is Ownable {
   // @dev Change the owner of a Nom
   // @param name The name to change the owner of
   // @param newOwner The new owner
-  function changeNameOwner(bytes32 name, address newOwner) external {
+  function changeNameOwner(bytes32 name, address newOwner) override external {
     require(!isExpired(name), "Cannot change owner of an expired name");
     require(_msgSender() == owners[name], "Caller is not the owner of this name");
 
@@ -120,7 +121,10 @@ contract Nom is Ownable {
     emit FeeModuleChanged(address(previousFeeModule), address(feeModule));
   }
 
-  function isExpired(bytes32 name) public view returns (bool expired) {
+  // @dev Check whether a Nom is expired
+  // @param name The name to check the expiration of
+  // @param expired Flag indicating whether this Nom is expired
+  function isExpired(bytes32 name) override public view returns (bool expired) {
     uint256 currentTime = block.timestamp;
     return currentTime > expirations[name];
   }
