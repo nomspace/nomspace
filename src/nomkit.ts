@@ -5,7 +5,7 @@ import {utils} from "ethers"
 import {Nom, ABI} from "../types/web3-v1-contracts/Nom"
 
 /**
- * NomKit provformatBytes32Stringes wrappers to interact with Nom contract.
+ * NomKit provides wrappers to interact with Nom contract.
  */
 export class NomKit {
   public readonly contract: Nom

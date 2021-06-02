@@ -1,6 +1,6 @@
 {
-  "name": "@nomspace/nomkit",
-  "version": "1.0.2",
+  "name": "@nomspace/nomspace",
+  "version": "1.0.1",
   "description": "A simple name resolution protocol",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
@@ -12,7 +12,7 @@
     "build": "yarn compile:contracts && yarn compile:ts",
     "clean": "rm -rf ./build ./dist ./types",
     "deploy:alfajores": "yarn truffle migrate --network alfajores",
-    "console:alfajores": "yarn truffle console --network alfajores",
+    "deploy:mainnet": "yarn truffle migrate --network mainnet",
     "compile:ts": "yarn tsc -b",
     "compile:contracts": "yarn truffle compile && yarn typechain --target=truffle-v5 'build/contracts/*.json' && yarn ts-node ./src/codegen.ts",
     "prepublishOnly": "yarn clean && yarn build"

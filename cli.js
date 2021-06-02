@@ -5,22 +5,23 @@ const Web3 = require('web3')
 const ContractKit = require('@celo/contractkit')
 const {NomKit, NomConfig} = require('./dist/src')
 
-const {PRIVATE_KEY, RPC_URL, NET_ID} = process.env
+const {PRIVATE_KEY, RPC_URL} = process.env
 
 const web3 = new Web3(RPC_URL)
 const kit = ContractKit.newKitFromWeb3(web3)
 kit.connection.addAccount(PRIVATE_KEY)
-const nomKit = new NomKit(kit, NomConfig[NET_ID]['Nom']['address'])
-const explorer = NET_ID === "44787" ?
-  "https://alfajores-blockscout.celo-testnet.org" :
-  "https://explorer.celo.org"
 
 const getExplorerTx = (hash) => {
   return `${explorer}/tx/${hash}`
 }
 
-const getExplorerAddress = (address) => {
-  return `${explorer}/address/${address}`
+let netId, explorer, nomKit
+const init = async () => {
+  netId = await web3.eth.net.getId()
+  explorer = netId === "44787" ?
+    "https://alfajores-blockscout.celo-testnet.org" :
+    "https://explorer.celo.org"
+  nomKit = new NomKit(kit, NomConfig[netId]['Nom']['address'])
 }
 
 require('yargs')
@@ -40,6 +41,7 @@ require('yargs')
       })
     },
     async (argv) => {
+      await init();
       const senderAccount = (await kit.web3.eth.getAccounts())[0]
       const txo = nomKit.reserve(argv.name, argv.duration)
       try {
@@ -64,6 +66,7 @@ require('yargs')
       })
     },
     async (argv) => {
+      await init();
       const senderAccount = (await kit.web3.eth.getAccounts())[0]
       const txo = nomKit.extend(argv.name, argv.duration)
       try {
@@ -80,9 +83,11 @@ require('yargs')
     (yargs) => {
       yargs.positional('name', {
         type: 'string',
-        describe: 'The name to resolve', })
+        describe: 'The name to resolve',
+      })
     },
     async (argv) => {
+      await init();
       console.log("Resolution:", await nomKit.resolve(argv.name))
     },
   )
@@ -100,6 +105,7 @@ require('yargs')
       })
     },
     async (argv) => {
+      await init();
       const senderAccount = (await kit.web3.eth.getAccounts())[0]
       const txo = nomKit.changeResolution(argv.name, argv.address)
       try {
@@ -120,6 +126,7 @@ require('yargs')
       })
     },
     async (argv) => {
+      await init();
       console.log("Owner:", await nomKit.nameOwner(argv.name))
     },
   )
@@ -137,6 +144,7 @@ require('yargs')
       })
     },
     async (argv) => {
+      await init();
       const senderAccount = (await kit.web3.eth.getAccounts())[0]
       const txo = nomKit.changeNameOwner(argv.name, argv.address)
       try {
@@ -157,6 +165,7 @@ require('yargs')
       })
     },
     async (argv) => {
+      await init();
       console.log("Expiration:", await nomKit.expiration(argv.name))
     },
   )
