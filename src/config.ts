@@ -9,10 +9,10 @@ export const NomConfig = {
   },
   42220: {
     Nom: {
-      address: ""
+      address: "0xF88fc5616E20Bab3E765ea8c5FCB182320325Ae1"
     },
     FeeModule: {
-      address: ""
+      address: "0x524727CFa29e0510CC81428B4Eb024F3A4C287a6"
     }
   }
 }
