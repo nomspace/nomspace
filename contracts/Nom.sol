@@ -8,7 +8,7 @@ import "./interfaces/INom.sol";
 
 // NOTE: Name == Nom in the documentation and is used interchangeably
 contract Nom is INom, Ownable {
-	using SafeMath for uint256;
+  using SafeMath for uint256;
 
   // @dev Each name's expiration timestamp
   mapping (bytes32 => uint256) override public expirations;
@@ -19,19 +19,19 @@ contract Nom is INom, Ownable {
   // @dev Each name's owner
   mapping (bytes32 => address) private owners;
 
-	// @dev emitted when a Nom's ownership has changed
-	// @param name The name whose owner changed
-	// @param previousOwner The previous owner
-	// @param newOwner The new owner
+  // @dev emitted when a Nom's ownership has changed
+  // @param name The name whose owner changed
+  // @param previousOwner The previous owner
+  // @param newOwner The new owner
   event NameOwnerChanged(bytes32 indexed name, address indexed previousOwner, address indexed newOwner);
-	// @dev emitted when a Nom's resolution has changed
-	// @param name The name whose resolution changed
-	// @param previousResolution The previous resolution
-	// @param newResolution The new resolution
+  // @dev emitted when a Nom's resolution has changed
+  // @param name The name whose resolution changed
+  // @param previousResolution The previous resolution
+  // @param newResolution The new resolution
   event NameResolutionChanged(bytes32 indexed name, address indexed previousResolution, address indexed newResolution);
-	// @dev emitted when Nom's fee module changes
-	// @param previousFeeModule Address of the previous feeModule
-	// @param newFeeModule Address of the new feeModule
+  // @dev emitted when Nom's fee module changes
+  // @param previousFeeModule Address of the previous feeModule
+  // @param newFeeModule Address of the new feeModule
   event FeeModuleChanged(address indexed previousFeeModule, address indexed newFeeModule);
 
   constructor(IFeeModule _feeModule) {
