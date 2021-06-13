@@ -6,28 +6,34 @@ require('chai').should()
 
 import {NomKit} from "../nomkit"
 import {newKit} from "@celo/contractkit"
-import {NomInstance, FeeModuleV0Instance, FailingFeeModuleInstance} from "../../types/truffle-contracts";
+import {NomInstance, FeeModuleV0Instance, FeeModuleV1Instance, MockERC20Instance} from "../../types/truffle-contracts";
 const Nom = artifacts.require("Nom");
+const MockERC20 = artifacts.require("MockERC20");
 const FeeModuleV0 = artifacts.require("FeeModuleV0");
-const FailingFeeModule = artifacts.require("FailingFeeModule");
+const FeeModuleV1 = artifacts.require("FeeModuleV1");
 
 const kit = newKit("http://127.0.0.1:7545")
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const ONE_DAY = 1000 * 60 * 60 * 24
 const NAME = "nomspace";
+const NAME2 = "nomspace2";
 
 contract("Nom", async (accounts) => {
+  let mockERC20: MockERC20Instance;
   let feeModule: FeeModuleV0Instance;
-  let failingFeeModule: FailingFeeModuleInstance;
+  let feeModule1: FeeModuleV1Instance;
   let nom: NomInstance;
   let nomKit: NomKit;
 
   const alice = accounts[0];
   const bob = accounts[1];
+  const treasury = accounts[2];
 
   before(async () => {
+    mockERC20 = await MockERC20.new(100);
     feeModule = await FeeModuleV0.new(); nom = await Nom.new(feeModule.address);
-    failingFeeModule = await FailingFeeModule.new(); nom = await Nom.new(feeModule.address);
+    feeModule1 = await FeeModuleV1.new(mockERC20.address, 1, treasury);
+    nom = await Nom.new(feeModule.address);
     nomKit = new NomKit(kit, nom.address)
   })
 
@@ -107,15 +113,32 @@ contract("Nom", async (accounts) => {
 
   describe("feeModule", () => {
     it("should fail if called by a non contract owner", async () => {
-      await nomKit.setFeeModule(failingFeeModule.address).send({from: bob}).should.be.rejectedWith("Ownable: caller is not the owner");
+      await nomKit.setFeeModule(feeModule1.address).send({from: bob}).should.be.rejectedWith("Ownable: caller is not the owner");
     })
 
     it("should work", async () => {
-      await nomKit.setFeeModule(failingFeeModule.address).send({from: alice})
-      await nomKit.reserve("random", ONE_DAY).send({from: bob}).should.be.rejectedWith("Failed to pay for the name")
-      await nomKit.extend(NAME, ONE_DAY).send({from: bob}).should.be.rejectedWith("Failed to pay for the name")
+      await nomKit.setFeeModule(feeModule1.address).send({from: alice});
+      (await nomKit.feeModule()).should.be.equal(feeModule1.address)
     })
   })
 
+  describe("FeeModulev1", async () => {
+    it("should fail if user has no funds", async () => {
+      await nomKit.reserve("random", 100).send({from: bob}).should.be.rejectedWith("ERC20: transfer amount exceeds balance");
+    })
+
+    it("should fail if there's no approval", async () => {
+      await nomKit.reserve(NAME2, 100).send({from: alice}).should.be.rejectedWith("ERC20: transfer amount exceeds allowance");
+    })
+
+    it("should work if user has funds", async () => {
+      await mockERC20.approve(feeModule1.address, 100)
+      const now = Math.floor(Date.now() / 1000)
+      await nomKit.reserve(NAME2, 100).send({from: alice});
+      (await nomKit.expiration(NAME2)).should.be.gte(now + 100);
+      (await nomKit.nameOwner(NAME2)).should.be.equal(alice);
+      (await mockERC20.balanceOf(alice)).toString().should.be.eq("0")
+    })
+  })
 })
 

@@ -60,6 +60,10 @@ export class NomKit {
     return Number(await this.contract.methods.expirations(bytes).call())
   }
 
+  public feeModule = async () => {
+    return this.contract.methods.feeModule().call()
+  }
+
   public setFeeModule = (newFeeModule: Address) => {
     const txo = this.contract.methods.setFeeModule(newFeeModule)
     return toTransactionObject(this.kit.connection, txo)

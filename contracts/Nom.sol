@@ -13,7 +13,7 @@ contract Nom is INom, Ownable {
   // @dev Each name's expiration timestamp
   mapping (bytes32 => uint256) override public expirations;
   // @dev The upgradeable fee module for purchasing Noms
-  IFeeModule feeModule;
+  IFeeModule public feeModule;
   // @dev Each name's resolution
   mapping (bytes32 => address) private resolutions;
   // @dev Each name's owner
@@ -43,11 +43,12 @@ contract Nom is INom, Ownable {
   // @param durationToReserve The length of time in seconds to reserve this name
   function reserve(bytes32 name, uint256 durationToReserve) override external {
     require(isExpired(name), "Cannot reserve a name that has not expired");
-    bool paid = feeModule.pay(durationToReserve);
+    bool paid = feeModule.pay(_msgSender(), durationToReserve);
     require(paid, "Failed to pay for the name");
 
     uint256 currentTime = block.timestamp;
-    address previousOwner = owners[name]; owners[name] = _msgSender();
+    address previousOwner = owners[name]; 
+    owners[name] = _msgSender();
     expirations[name] = currentTime.add(durationToReserve);
     resolutions[name] = address(0);
     emit NameOwnerChanged(name, previousOwner, owners[name]);
@@ -59,7 +60,7 @@ contract Nom is INom, Ownable {
   function extend(bytes32 name, uint256 durationToExtend) override external {
     require(!isExpired(name), "Cannot extend the reservation of a name that has expired");
     require(_msgSender() == owners[name], "Caller is not the owner of this name");
-    bool paid = feeModule.pay(durationToExtend);
+    bool paid = feeModule.pay(_msgSender(), durationToExtend);
     require(paid, "Failed to pay for the name");
 
     uint256 currentExpiration = expirations[name];
@@ -125,7 +126,6 @@ contract Nom is INom, Ownable {
   // @param name The name to check the expiration of
   // @param expired Flag indicating whether this Nom is expired
   function isExpired(bytes32 name) override public view returns (bool expired) {
-    uint256 currentTime = block.timestamp;
-    return currentTime > expirations[name];
+    return block.timestamp > expirations[name];
   }
 }
