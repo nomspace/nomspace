@@ -4,6 +4,35 @@
 
 A simple name resolution service
 
+## Nomkit documentation
+### Installation
+
+```
+yarn add @nomspace/nomkit
+```
+
+You will also want ContractKit from:
+`@celo/contractkit` or `@celo-tools/use-contractkit`
+
+### Usage
+```
+import {NomKit} from "@nomspace/nomkit"
+import {newKit} from "@celo/contractkit"
+
+const kit = newKit("https://forno.celo.org")
+const nomKit = new NomKit(kit, "0xABf8faBbC071F320F222A526A2e1fBE26429344d")
+
+// Resolve a example.nom
+// NOTE: Nomspace is case-sensitive. Convention is to always use lowercase
+const resolution = await kit.resolve("example".toLowerCase());
+console.log(resolution)
+
+// Reserve a example.nom
+await reserve("example").send({from: kit.accounts[0]})
+
+```
+
+
 ## Contract addresses
 ### Mainnet
 Nom: [0xABf8faBbC071F320F222A526A2e1fBE26429344d](https://explorer.celo.org/address/0xABf8faBbC071F320F222A526A2e1fBE26429344d)
