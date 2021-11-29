@@ -8,7 +8,7 @@ A simple name resolution service
 ### Installation
 
 ```
-yarn add @nomspace/nomkit
+yarn add @nomspace/nomspace
 ```
 
 You will also want ContractKit from:
@@ -16,7 +16,7 @@ You will also want ContractKit from:
 
 ### Usage
 ```
-import {NomKit} from "@nomspace/nomkit"
+import {NomKit} from "@nomspace/nomspace"
 import {newKit} from "@celo/contractkit"
 
 const kit = newKit("https://forno.celo.org")
