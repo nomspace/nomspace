@@ -63,7 +63,10 @@ export class NomKit {
     const activeNoms: string[] = [];
     await Promise.all(
       noms.map(async (nom) => {
-        if ((await this.contract.methods.nameOwner(nom).call()) === address) {
+        if (
+          (await this.contract.methods.nameOwner(nom).call()).toLowerCase() ===
+          address.toLowerCase()
+        ) {
           activeNoms.push(utils.parseBytes32String(nom));
         }
       })
@@ -84,7 +87,10 @@ export class NomKit {
     const activeNoms: string[] = [];
     await Promise.all(
       noms.map(async (nom) => {
-        if ((await this.contract.methods.resolve(nom).call()) === resolution) {
+        if (
+          (await this.contract.methods.resolve(nom).call()).toLowerCase() ===
+          resolution.toLowerCase()
+        ) {
           activeNoms.push(utils.parseBytes32String(nom));
         }
       })
