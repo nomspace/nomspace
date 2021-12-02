@@ -1,6 +1,6 @@
 {
   "name": "@nomspace/nomspace",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "A simple name resolution protocol",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
