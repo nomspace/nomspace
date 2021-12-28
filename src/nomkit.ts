@@ -23,30 +23,30 @@ export class NomKit {
   }
 
   public reserve = (name: string, durationToReserve: number) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     const txo = this.contract.methods.reserve(bytes, durationToReserve);
     return toTransactionObject(this.kit.connection, txo);
   };
 
   public extend = (name: string, durationToExtend: number) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     const txo = this.contract.methods.extend(bytes, durationToExtend);
     return toTransactionObject(this.kit.connection, txo);
   };
 
   public resolve = async (name: string) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     return await this.contract.methods.resolve(bytes).call();
   };
 
   public changeResolution = (name: string, newResolution: Address) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     const txo = this.contract.methods.changeResolution(bytes, newResolution);
     return toTransactionObject(this.kit.connection, txo);
   };
 
   public nameOwner = async (name: string) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     return await this.contract.methods.nameOwner(bytes).call();
   };
 
@@ -99,18 +99,18 @@ export class NomKit {
   };
 
   public changeNameOwner = (name: string, newOwner: Address) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     const txo = this.contract.methods.changeNameOwner(bytes, newOwner);
     return toTransactionObject(this.kit.connection, txo);
   };
 
   public isExpired = async (name: string) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     return await this.contract.methods.isExpired(bytes).call();
   };
 
   public expiration = async (name: string) => {
-    const bytes = utils.formatBytes32String(name);
+    const bytes = utils.formatBytes32String(name.toLowerCase());
     return Number(await this.contract.methods.expirations(bytes).call());
   };
 
